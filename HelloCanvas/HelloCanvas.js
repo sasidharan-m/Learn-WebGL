@@ -1,4 +1,5 @@
-// HelloCanvas.js
+//HelloCanvas.js
+// Author: Sasidharan Mahalingam
 function main() {
 // Retrieve <canvas> element
 var canvas = document.getElementById('webgl');
