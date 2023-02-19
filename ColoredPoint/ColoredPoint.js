@@ -49,7 +49,7 @@ if(a_PointSize < 0) {
 
 //Get storage location of the uniform variable
 var u_FragColor = gl.getUniformLocation(gl.program, 'u_FragColor');
-if(u_FragColor < 0) {
+if(!u_FragColor) {
 	console.log('Failed to get the storage location of u_FragColor');
 	return;
 }
