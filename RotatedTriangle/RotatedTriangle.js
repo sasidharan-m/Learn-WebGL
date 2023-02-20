@@ -1,11 +1,17 @@
-//TranslatedTriangle.js
+//RotatedTriangle.js
 //Author: Sasidharan Mahalingam
 //Vertex shader program
 var VSHADER_SOURCE = 
+	// x' = x cos b - y sin b
+	// y' = x sin b + y cos b
+	// z' = z
   'attribute vec4 a_Position;\n' +
-  'uniform vec4 u_Translation;\n' +
+  'uniform float u_CosB, u_SinB;\n' +
   'void main() {\n' +
-  ' gl_Position = a_Position + u_Translation;\n' +
+  ' gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;\n' +
+  '	gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;\n' +
+  '	gl_Position.z = a_Position.z;\n' +
+  '	gl_Position.w = 1.0;\n' +
   '}\n';
 
 //Fragment shader program
@@ -14,8 +20,8 @@ var FSHADER_SOURCE =
   ' gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
   '}\n';
 
-//Translation distances for X, Y and Z directions
-var Tx = 0.5, Ty = 0.5, Tz = 0.0;
+//Rotation angle
+var ANGLE = 90;
 
 function main() {
 //Retrieve canvas element
@@ -41,15 +47,26 @@ if(n < 0) {
 	return;
 }
 
-//Get storage location of the uniform variable
-var u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
-if(!u_Translation) {
-	console.log('Failed to get the storage location of u_Translation');
+//Pass the required data to rotate the shape to the vertex shader
+var radian = Math.PI * ANGLE / 180;
+var cosB = Math.cos(radian);
+var sinB = Math.sin(radian);
+
+//Get storage location of the uniform variables
+var u_CosB = gl.getUniformLocation(gl.program, 'u_CosB');
+if(!u_CosB) {
+	console.log('Failed to get the storage location of u_CosB');
+	return;
+}
+var u_SinB = gl.getUniformLocation(gl.program, 'u_SinB');
+if(!u_SinB) {
+	console.log('Failed to get the storage location of u_SinB');
 	return;
 }
 
-//Pass the translation values to u_Translation
-gl.uniform4f(u_Translation, Tx, Ty, Tz, 0.0);
+//Pass the sin and cos values to u_CosB and u_SinB
+gl.uniform1f(u_CosB, cosB);
+gl.uniform1f(u_SinB, sinB);
 
 //Set the color for clearing the <canvas>
 gl.clearColor(0.0, 0.0, 0.0, 1.0);
