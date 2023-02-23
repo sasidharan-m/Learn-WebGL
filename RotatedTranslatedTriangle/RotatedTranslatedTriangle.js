@@ -1,11 +1,11 @@
-//RotatedTriangle_Matrix4.js
+//RotatedTranslatedTriangle.js
 //Author: Sasidharan Mahalingam
 //Vertex shader program
 var VSHADER_SOURCE = 
   'attribute vec4 a_Position;\n' +
-  'uniform mat4 u_xformMatrix;\n' +
+  'uniform mat4 u_ModelMatrix;\n' +
   'void main() {\n' +
-  ' gl_Position = u_xformMatrix * a_Position;\n' +
+  ' gl_Position = u_ModelMatrix * a_Position;\n' +
   '}\n';
 
 //Fragment shader program
@@ -14,8 +14,6 @@ var FSHADER_SOURCE =
   ' gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n' +
   '}\n';
 
-//Rotation angle
-var ANGLE = 90;
 
 function main() {
 //Retrieve canvas element
@@ -41,22 +39,31 @@ if(n < 0) {
 	return;
 }
 
+
 //Define the rotation matrix
 //Note: WebGL uses column major order
-var xformMatrix = new Matrix4();
-//Set the rotation matrix to xformMatrix
-xformMatrix.setRotate(ANGLE, 0, 0, 1);
+var modelMatrix = new Matrix4();
+
+//Rotation angle
+var ANGLE = 60;
+//Translation value
+var Tx = 0.5;
+
+//Set the rotation matrix to modelMatrix
+modelMatrix.setRotate(ANGLE, 0, 0, 1);
+//Add the translation value to the modelMatrix
+modelMatrix.translate(Tx, 0, 0); 
 
 //Get storage location of the uniform variable
-var u_xformMatrix = gl.getUniformLocation(gl.program, 'u_xformMatrix');
-if(!u_xformMatrix) {
-	console.log('Failed to get the storage location of u_xformMatrix');
+var u_ModelMatrix = gl.getUniformLocation(gl.program, 'u_ModelMatrix');
+if(!u_ModelMatrix) {
+	console.log('Failed to get the storage location of u_ModelMatrix');
 	return;
 }
 
 
 //Pass the matrix value from xformMatrix to u_xformMatrix
-gl.uniformMatrix4fv(u_xformMatrix, false, xformMatrix.elements);
+gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix.elements);
 
 
 //Set the color for clearing the <canvas>
